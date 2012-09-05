@@ -14,7 +14,10 @@ def get_data(token, secret, user_id)
 end
 
 users = [
-  {token: '4844c8414d10bb9416184f556fd26c63', secret: 'b623243bdaee5ea0b6371e74fc738978', user_id: '23876M'}
+  {token: '4844c8414d10bb9416184f556fd26c63', secret: 'b623243bdaee5ea0b6371e74fc738978', user_id: '23876M', sep_userid: 'jcfuller'},
+  {token: '1e6d4d6680de9f49a08d4c8c1406a6e2', secret: '650419b00fe0d88043c58b5950f7a978', user_id: '233MPC', sep_userid: 'mcterry'},
+  {token: '73191b438042964c58d44d630d904e08', secret: '8d0a0ead3e63687cc1567047217fb368', user_id: '22NYYJ', sep_userid: 'rmschade'},
+  {token: 'e460d33233feaa2d0997d1b35613f5b4', secret: '147e461520d58f0538920fb5e7fd7231', user_id: '238VWY', sep_userid: 'mdswanson'}
   ]
 
 
