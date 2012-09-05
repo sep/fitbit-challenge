@@ -1,0 +1,14 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    awesome_print (1.0.2)
+    fitgem (0.5.2)
+      oauth
+    oauth (0.4.7)
+
+PLATFORMS
+  x86-mingw32
+
+DEPENDENCIES
+  awesome_print
+  fitgem
