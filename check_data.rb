@@ -15,8 +15,6 @@ def get_data(token, secret, user_id, team)
   {name: client.user_info['user']['fullName'], steps: client.activities_on_date(Date.today)['summary']['steps'], team: team}
 end
 
-#data = [{:name=>"Todd Trimble", :steps=>3192, :team=>"Team 3"}, {:name=>nil, :steps=>6605, :team=>"IT Guys"}, {:name=>"Paul Pringle", :steps=>9299, :team=>"Team 3"}, {:name=>"Jonathon Fuller", :steps=>7632, :team=>"Red Beans & Rice"}, {:name=>"Ryan Schade", :steps=>6305, :team=>"Red Beans & Rice"}, {:name=>"Matt Swanson", :steps=>10013, :team=>"Red Beans & Rice"}, {:name=>"Matt Terry", :steps=>6338, :team=>"Red Beans & Rice"}]
-
 data = DATA.map {|u| get_data(u['token'], u['secret'], u['user_id'], u['team'])}
 
 data = data.group_by{|u| u[:team]}
