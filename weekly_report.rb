@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'fitgem'
-require 'awesome_print'
 require 'date'
 
 CONSUMER_KEY = '7556156012894ad0882b86dd67f3a416'
