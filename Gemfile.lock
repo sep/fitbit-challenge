@@ -4,7 +4,17 @@ GEM
     awesome_print (1.0.2)
     fitgem (0.5.2)
       oauth
+    i18n (0.6.1)
+    mail (2.4.4)
+      i18n (>= 0.4.0)
+      mime-types (~> 1.16)
+      treetop (~> 1.4.8)
+    mime-types (1.19)
     oauth (0.4.7)
+    polyglot (0.3.3)
+    treetop (1.4.10)
+      polyglot
+      polyglot (>= 0.3.1)
 
 PLATFORMS
   ruby
@@ -13,3 +23,4 @@ PLATFORMS
 DEPENDENCIES
   awesome_print
   fitgem
+  mail
