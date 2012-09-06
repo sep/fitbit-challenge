@@ -53,7 +53,7 @@ Mail.defaults do
   delivery_method :smtp, { 
     :address => 'mail.sep.com',
     :port => '25',
-	:enable_starttls_auto => false
+    :enable_starttls_auto => false
   }
 end
 
