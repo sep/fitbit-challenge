@@ -11,14 +11,15 @@ DATA = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'users.json')))
 
 def get_data(token, secret, user_id, team)
   client = Fitgem::Client.new({:consumer_key => CONSUMER_KEY, :consumer_secret => CONSUMER_SECRET, :token => token, :secret => secret, :user_id => user_id})
+  now = DateTime.now
   {name: client.user_info['user']['fullName'],
-   steps: { sunday: client.activities_on_date(DateTime.now - DateTime.now.wday - 7)['summary']['steps'],
-            monday: client.activities_on_date(DateTime.now - DateTime.now.wday - 6)['summary']['steps'],
-            tuesday: client.activities_on_date(DateTime.now - DateTime.now.wday - 5)['summary']['steps'],
-            wednesday: client.activities_on_date(DateTime.now - DateTime.now.wday - 4)['summary']['steps'],
-            thursday: client.activities_on_date(DateTime.now - DateTime.now.wday - 3)['summary']['steps'],
-            friday: client.activities_on_date(DateTime.now - DateTime.now.wday - 2)['summary']['steps'],
-            saturday: client.activities_on_date(DateTime.now - DateTime.now.wday - 1)['summary']['steps'],
+   steps: { sunday: client.activities_on_date(now - now.wday - 7)['summary']['steps'],
+            monday: client.activities_on_date(now - now.wday - 6)['summary']['steps'],
+            tuesday: client.activities_on_date(now - now.wday - 5)['summary']['steps'],
+            wednesday: client.activities_on_date(now - now.wday - 4)['summary']['steps'],
+            thursday: client.activities_on_date(now - now.wday - 3)['summary']['steps'],
+            friday: client.activities_on_date(now - now.wday - 2)['summary']['steps'],
+            saturday: client.activities_on_date(now - now.wday - 1)['summary']['steps'],
           },
    team: team
   }
