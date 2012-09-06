@@ -32,7 +32,7 @@ data.keys.each do |x|
 	team_total = 0
 	puts x
 	data[x].each do |i|
-		puts "#{i[:name]},#{i[:steps][:sunday]},#{i[:steps][:monday]},#{i[:steps][:tuesday]},#{i[:steps][:wednesday]},#{i[:steps][:thursday]},#{i[:steps][:friday]},#{i[:steps][:saturday]}"
+		puts "#{i[:name]}  #{i[:steps][:sunday]},#{i[:steps][:monday]},#{i[:steps][:tuesday]},#{i[:steps][:wednesday]},#{i[:steps][:thursday]},#{i[:steps][:friday]},#{i[:steps][:saturday]} Total:#{i[:steps][:sunday]+i[:steps][:monday]+i[:steps][:tuesday]+i[:steps][:wednesday]+i[:steps][:thursday]+i[:steps][:friday]+i[:steps][:saturday]}"
 		team_total += i[:steps][:sunday]
 		team_total += i[:steps][:monday]
 		team_total += i[:steps][:tuesday]
