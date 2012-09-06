@@ -11,11 +11,20 @@ DATA = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'users.json')))
 
 def get_data(token, secret, user_id, team)
   client = Fitgem::Client.new({:consumer_key => CONSUMER_KEY, :consumer_secret => CONSUMER_SECRET, :token => token, :secret => secret, :user_id => user_id})
-  access_token = client.reconnect(token, secret)
-  {name: client.user_info['user']['fullName'], steps: client.activities_on_date(Date.today)['summary']['steps'], team: team}
+  {name: client.user_info['user']['fullName'],
+   steps: { sunday: client.activities_on_date(DateTime.now - DateTime.now.wday - 7)['summary']['steps'],
+            monday: client.activities_on_date(DateTime.now - DateTime.now.wday - 6)['summary']['steps'],
+            tuesday: client.activities_on_date(DateTime.now - DateTime.now.wday - 5)['summary']['steps'],
+            wednesday: client.activities_on_date(DateTime.now - DateTime.now.wday - 4)['summary']['steps'],
+            thursday: client.activities_on_date(DateTime.now - DateTime.now.wday - 3)['summary']['steps'],
+            friday: client.activities_on_date(DateTime.now - DateTime.now.wday - 2)['summary']['steps'],
+            saturday: client.activities_on_date(DateTime.now - DateTime.now.wday - 1)['summary']['steps'],
+          },
+   team: team
+  }
 end
 
-data = DATA.map {|u| get_data(u['token'], u['secret'], u['user_id'], u['team'])}
+data = DATA.select{|u| !(u['token'].empty?)}.map {|u| get_data(u['token'], u['secret'], u['user_id'], u['team'])}
 
 data = data.group_by{|u| u[:team]}
 
@@ -23,8 +32,14 @@ data.keys.each do |x|
 	team_total = 0
 	puts x
 	data[x].each do |i|
-		puts "#{i[:name]}   #{i[:steps]}"
-		team_total += i[:steps]
+		puts "#{i[:name]},#{i[:steps][:sunday]},#{i[:steps][:monday]},#{i[:steps][:tuesday]},#{i[:steps][:wednesday]},#{i[:steps][:thursday]},#{i[:steps][:friday]},#{i[:steps][:saturday]}"
+		team_total += i[:steps][:sunday]
+		team_total += i[:steps][:monday]
+		team_total += i[:steps][:tuesday]
+		team_total += i[:steps][:wednesday]
+		team_total += i[:steps][:thursday]
+		team_total += i[:steps][:friday]
+		team_total += i[:steps][:saturday]
 	end
 	puts "Team total: #{team_total}"
 	puts
