@@ -14,8 +14,14 @@ get '/' do
   'hello world'
 end
 
+get '/total' do
+  # TODO: optimize.  run sql in database?
+  activities = Activity.all
+  sum_steps(activities).to_json
+end
+
 get '/team_leaderboard' do
-  # TODO: optimize.  run sql in database
+  # TODO: optimize.  run sql in database?
   activities = Activity.all
   by_team = activities.group_by{|a| a.team}
   cnt_by_team = by_team.keys.inject([]){|memo, team_name| memo << {team: team_name, steps: sum_steps(by_team[team_name])}}
@@ -23,7 +29,7 @@ get '/team_leaderboard' do
 end
 
 get '/personal_leaderboard' do
-  # TODO: optimize.  run sql in database
+  # TODO: optimize.  run sql in database?
   activities = Activity.all
   by_person = activities.group_by{|a| a.user_id}
   cnt_by_person = by_person.keys.inject([]){|memo, user_id| memo << {person: by_person[user_id].first.name, steps: sum_steps(by_person[user_id])}}
@@ -31,6 +37,7 @@ get '/personal_leaderboard' do
 end
 
 get '/member_contributions' do
+  # TODO: optimize.  run sql in database?
   activities = Activity.all
   by_team = activities.group_by{|a| a.team}
 
