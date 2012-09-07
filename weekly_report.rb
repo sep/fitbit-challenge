@@ -3,29 +3,38 @@ require 'bundler/setup'
 require 'fitgem'
 require 'date'
 require 'mail'
+require './fit_data'
 
 CONSUMER_KEY = '7556156012894ad0882b86dd67f3a416'
 CONSUMER_SECRET = '442944ace4b54fddae26727e6d69c136'
 
 DATA = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'users.json')))
 
-def get_data(token, secret, user_id, team)
-  client = Fitgem::Client.new({:consumer_key => CONSUMER_KEY, :consumer_secret => CONSUMER_SECRET, :token => token, :secret => secret, :user_id => user_id})
+def get_data(token, secret, user_id, team, sep_userid)
+  client = FitData.new(CONSUMER_KEY, CONSUMER_SECRET)
   now = DateTime.now
-  {name: client.user_info['user']['fullName'],
-   steps: { sunday: client.activities_on_date(now - now.wday - 7)['summary']['steps'],
-            monday: client.activities_on_date(now - now.wday - 6)['summary']['steps'],
-            tuesday: client.activities_on_date(now - now.wday - 5)['summary']['steps'],
-            wednesday: client.activities_on_date(now - now.wday - 4)['summary']['steps'],
-            thursday: client.activities_on_date(now - now.wday - 3)['summary']['steps'],
-            friday: client.activities_on_date(now - now.wday - 2)['summary']['steps'],
-            saturday: client.activities_on_date(now - now.wday - 1)['summary']['steps'],
+  sunday = client.get_data(token, secret, user_id, now - now.wday - 7)
+  monday = client.get_data(token, secret, user_id, now - now.wday - 6)
+  tuesday = client.get_data(token, secret, user_id, now - now.wday - 5)
+  wednesday = client.get_data(token, secret, user_id, now - now.wday - 4)
+  thursday = client.get_data(token, secret, user_id, now - now.wday - 3)
+  friday = client.get_data(token, secret, user_id, now - now.wday - 2)
+  saturday = client.get_data(token, secret, user_id, now - now.wday - 1)
+  name = sunday.name || sep_userid
+  {name: name,
+   steps: { sunday: sunday.steps,
+            monday: monday.steps,
+            tuesday: tuesday.steps,
+            wednesday: wednesday.steps,
+            thursday: thursday.steps,
+            friday: friday.steps,
+            saturday: saturday.steps
           },
    team: team
   }
 end
 
-data = DATA.select{|u| !(u['token'].empty?)}.map {|u| get_data(u['token'], u['secret'], u['user_id'], u['team'])}
+data = DATA.select{|u| !(u['token'].empty?)}.map {|u| get_data(u['token'], u['secret'], u['user_id'], u['team'], u['sep_userid'])}
 
 data = data.group_by{|u| u[:team]}
 data = data.sort_by{|u| u[0]}
