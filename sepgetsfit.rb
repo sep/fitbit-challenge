@@ -21,3 +21,7 @@ DataMapper.auto_upgrade!
 get '/' do
   'hello world'
 end
+
+get '/count' do
+  Activity.all.count
+end
