@@ -1,3 +1,4 @@
+require 'fitgem'
 require './activity'
 
 class FitData

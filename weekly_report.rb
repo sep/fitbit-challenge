@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'bundler/setup'
-require 'fitgem'
 require 'date'
 require 'mail'
 require './fit_data'
