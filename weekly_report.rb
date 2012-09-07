@@ -28,33 +28,38 @@ end
 data = DATA.select{|u| !(u['token'].empty?)}.map {|u| get_data(u['token'], u['secret'], u['user_id'], u['team'])}
 
 data = data.group_by{|u| u[:team]}
+data = data.sort_by{|u| u[0]}
 
 range_string = "#{(DateTime.now - DateTime.now.wday - 7).to_date} through #{(DateTime.now - DateTime.now.wday - 1).to_date}"
-mail_body = "#{range_string}\n"
+mail_body = "Weekly report for #{range_string}\n\n"
 
-data.keys.each do |x|
+data.each do |x|
   team_total = 0
-  mail_body += "#{x}\n"
-  data[x].each do |i|
+  mail_body += "#{x[0]}\n"
+
+  x[1].each do |i|
     mail_body += "#{i[:name]}  #{i[:steps][:sunday]},#{i[:steps][:monday]},#{i[:steps][:tuesday]},#{i[:steps][:wednesday]},#{i[:steps][:thursday]},#{i[:steps][:friday]},#{i[:steps][:saturday]} Total:#{i[:steps][:sunday]+i[:steps][:monday]+i[:steps][:tuesday]+i[:steps][:wednesday]+i[:steps][:thursday]+i[:steps][:friday]+i[:steps][:saturday]}\n"
-	team_total += i[:steps][:sunday]
-	team_total += i[:steps][:monday]
-	team_total += i[:steps][:tuesday]
-	team_total += i[:steps][:wednesday]
-	team_total += i[:steps][:thursday]
-	team_total += i[:steps][:friday]
-	team_total += i[:steps][:saturday]
+	  team_total += i[:steps][:sunday]
+	  team_total += i[:steps][:monday]
+	  team_total += i[:steps][:tuesday]
+	  team_total += i[:steps][:wednesday]
+	  team_total += i[:steps][:thursday]
+	  team_total += i[:steps][:friday]
+	  team_total += i[:steps][:saturday]
   end
+
   mail_body += "Team total: #{team_total}\n"
   mail_body += "\n"
 end
 
-Mail.defaults do
-  delivery_method :smtp, { 
+mail_options = { 
     :address => 'mail.sep.com',
     :port => '25',
     :enable_starttls_auto => false
   }
+
+Mail.defaults do
+  delivery_method :smtp, mail_options
 end
 
 mail = Mail.new do
