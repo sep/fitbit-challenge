@@ -14,6 +14,7 @@ class FitData
     a.user_id = user_id
     a.name = client.user_info['user']['fullName']
     a.steps = client.activities_on_date(date)['summary']['steps']
+    a.date = date
 
     return a
   end

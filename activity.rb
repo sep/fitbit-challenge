@@ -6,7 +6,7 @@ class Activity
   property :id, Serial
   property :user_id, String
   property :name, String
-  property :date, DateTime
+  property :date, Date
   property :steps, Integer
   property :team, String
 end
