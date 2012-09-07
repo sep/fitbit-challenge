@@ -23,5 +23,5 @@ get '/' do
 end
 
 get '/count' do
-  Activity.all.count
+  "number of activities: #{Activity.all.count}"
 end
