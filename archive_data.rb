@@ -21,4 +21,6 @@ def store(token, secret, user_id, date, team, sep_userid)
   activity.save
 end
 
-DATA.select{|u| !(u['token'].empty?)}.each {|u| store(u['token'], u['secret'], u['user_id'], DateTime.now, u['team'], u['sep_userid'])}
+days_ago = ARGV.first.to_i || 0
+#TODO: destroy data for this day - something like Activity.destroy where date = Date.today - days_ago
+DATA.select{|u| !(u['token'].empty?)}.each {|u| store(u['token'], u['secret'], u['user_id'], Date.today - days_ago, u['team'], u['sep_userid'])}
