@@ -17,6 +17,4 @@ verifier = gets.chomp
 access_token = client.authorize(token, secret, { :oauth_verifier => verifier })
 
 puts "Verifier is: "+verifier
-puts "Token is:    "+access_token.token
-puts "Secret is:   "+access_token.secret
-
+puts "\"token\": \"#{access_token.token}\", \"secret\": \"#{access_token.secret}\", \"user_id\": \"#{access_token.params[:encoded_user_id]}\","
