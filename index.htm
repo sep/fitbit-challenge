@@ -169,16 +169,17 @@
                      }]
                  });
        };
-       var plotTeamMembers = function(data) {
+       var plotTeamMembers = function(index, data) {
+         var memberData = data.members.map(function(x) { return [x.name, x.steps]; });
          chart = new Highcharts.Chart({
                      chart: {
-                         renderTo: 'member' + data,
+                         renderTo: 'member' + index,
                          plotBackgroundColor: null,
                          plotBorderWidth: null,
                          plotShadow: false
                      },
                      title: {
-                         text: 'Red Beans & Rice'
+                         text: data.team
                      },
                      plotOptions: {
                          pie: {
@@ -192,14 +193,8 @@
                      },
                      series: [{
                          type: 'pie',
-                         name: 'Browser share',
-                         data: [
-                             ['Firefox',   45.0],
-                             ['IE',       26.8],
-                             ['Safari',    8.5],
-                             ['Opera',     6.2],
-                             ['Others',   0.7]
-                         ]
+                         name: 'Member share',
+                         data: memberData
                      }]
                  });
        };
@@ -207,8 +202,18 @@
 
        plotTeamLeaderboard();
        plotPersonalLeaderboard();
-       for(var i=0; i<11; i++) {
-         plotTeamMembers(i);
+       var contributions = [
+         {'team': 'Read Beans & Rice',
+          'members': [{'name': 'jon', 'steps':120},
+                     {'name': 'ryan', 'steps':230}]
+         },
+         {'team': 'Cheese Weasels',
+          'members': [{'name': 'bob', 'steps':20},
+                     {'name': 'allen', 'steps':2300}]
+         }
+         ];
+       for(var i=0; i<contributions.length; i++) {
+         plotTeamMembers(i, contributions[i]);
        }
 
 
