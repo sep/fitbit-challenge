@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -41,7 +40,12 @@
    <script src="http://cdnjs.cloudflare.com/ajax/libs/highcharts/2.1.6/highcharts.js"></script>
    <script>
      $(document).ready(function() {
+       var stepsToNawlins = 1600000;
+
        var plotTeamLeaderboard = function(data) {
+         teams = data.map(function(x){ return x.team});
+         steps = data.map(function(x){ return x.steps});
+
          chart = new Highcharts.Chart({
                      chart: {
                          renderTo: 'team_board',
@@ -51,25 +55,19 @@
                          text: 'Overall Team Leaderboard'
                      },
                      xAxis: {
-                         categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],
+                         categories: teams,
                          title: {
-                             text: null
+                             text: 'Steps'
                          }
                      },
                      yAxis: {
                          min: 0,
+                         max: stepsToNawlins,
                          title: {
-                             text: 'Population (millions)',
-                             align: 'high'
+                             text: null
                          },
                          labels: {
                              overflow: 'justify'
-                         }
-                     },
-                     tooltip: {
-                         formatter: function() {
-                             return ''+
-                                 this.series.name +': '+ this.y +' millions';
                          }
                      },
                      plotOptions: {
@@ -79,33 +77,22 @@
                              }
                          }
                      },
-                     legend: {
-                         layout: 'vertical',
-                         align: 'right',
-                         verticalAlign: 'top',
-                         x: -100,
-                         y: 100,
-                         floating: true,
-                         borderWidth: 1,
-                         backgroundColor: '#FFFFFF',
-                         shadow: true
-                     },
                      credits: {
                          enabled: false
                      },
+                     legend: {
+                         enabled: false
+                     },
                      series: [{
-                         name: 'Year 1800',
-                         data: [107, 31, 635, 203, 2]
-                     }, {
-                         name: 'Year 1900',
-                         data: [133, 156, 947, 408, 6]
-                     }, {
-                         name: 'Year 2008',
-                         data: [973, 914, 4054, 732, 34]
+                         name: 'Steps',
+                         data: steps
                      }]
                  });
        };
        var plotPersonalLeaderboard = function(data) {
+         people = data.map(function(x){ return x.person});
+         steps = data.map(function(x){ return x.steps});
+
          chart = new Highcharts.Chart({
                      chart: {
                          renderTo: 'personal_board',
@@ -115,25 +102,20 @@
                          text: 'Top 10 Personal Leaderboard'
                      },
                      xAxis: {
-                         categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],
+                         categories: people,
                          title: {
                              text: null
                          }
                      },
                      yAxis: {
                          min: 0,
+                         max: stepsToNawlins,
                          title: {
-                             text: 'Population (millions)',
+                             text: null,
                              align: 'high'
                          },
                          labels: {
                              overflow: 'justify'
-                         }
-                     },
-                     tooltip: {
-                         formatter: function() {
-                             return ''+
-                                 this.series.name +': '+ this.y +' millions';
                          }
                      },
                      plotOptions: {
@@ -143,29 +125,15 @@
                              }
                          }
                      },
-                     legend: {
-                         layout: 'vertical',
-                         align: 'right',
-                         verticalAlign: 'top',
-                         x: -100,
-                         y: 100,
-                         floating: true,
-                         borderWidth: 1,
-                         backgroundColor: '#FFFFFF',
-                         shadow: true
-                     },
                      credits: {
                          enabled: false
                      },
+                     legend: {
+                         enabled: false
+                     },
                      series: [{
-                         name: 'Year 1800',
-                         data: [107, 31, 635, 203, 2]
-                     }, {
-                         name: 'Year 1900',
-                         data: [133, 156, 947, 408, 6]
-                     }, {
-                         name: 'Year 2008',
-                         data: [973, 914, 4054, 732, 34]
+                         name: 'Steps',
+                         data: steps
                      }]
                  });
        };
@@ -191,6 +159,9 @@
                              }
                          }
                      },
+                     credits: {
+                         enabled: false
+                     },
                      series: [{
                          type: 'pie',
                          name: 'Member share',
@@ -199,11 +170,59 @@
                  });
        };
 
+       var teamLeaderData = [
+         {'team': 'Red Beans & Rice', 'steps':1234},
+         {'team': 'Red Beans & Rice', 'steps':1234},
+         {'team': 'Red Beans & Rice', 'steps':1234},
+         {'team': 'Red Beans & Rice', 'steps':1234},
+         {'team': 'Red Beans & Rice', 'steps':1234},
+         {'team': 'Red Beans & Rice', 'steps':1234},
+         {'team': 'Red Beans & Rice', 'steps':1234},
+         {'team': 'Red Beans & Rice', 'steps':1234},
+         {'team': 'Red Beans & Rice', 'steps':1234},
+         {'team': 'Cheese Weasels', 'steps':2345}
+       ];
 
-       plotTeamLeaderboard();
-       plotPersonalLeaderboard();
+       var personLeaderData = [
+         {'person': 'Allen', 'steps':1234},
+         {'person': 'Allen', 'steps':1234},
+         {'person': 'Allen', 'steps':1234},
+         {'person': 'Allen', 'steps':1234},
+         {'person': 'Allen', 'steps':1234},
+         {'person': 'Allen', 'steps':1234},
+         {'person': 'Allen', 'steps':1234},
+         {'person': 'Allen', 'steps':1234},
+         {'person': 'Allen', 'steps':1234},
+         {'person': 'Allen', 'steps':1234},
+         {'person': 'Jon', 'steps':2345}
+       ];
+
        var contributions = [
-         {'team': 'Read Beans & Rice',
+         {'team': 'Red Beans & Rice',
+          'members': [{'name': 'jon', 'steps':120},
+                     {'name': 'ryan', 'steps':230}]
+         },
+         {'team': 'Red Beans & Rice',
+          'members': [{'name': 'jon', 'steps':120},
+                     {'name': 'ryan', 'steps':230}]
+         },
+         {'team': 'Red Beans & Rice',
+          'members': [{'name': 'jon', 'steps':120},
+                     {'name': 'ryan', 'steps':230}]
+         },
+         {'team': 'Red Beans & Rice',
+          'members': [{'name': 'jon', 'steps':120},
+                     {'name': 'ryan', 'steps':230}]
+         },
+         {'team': 'Red Beans & Rice',
+          'members': [{'name': 'jon', 'steps':120},
+                     {'name': 'ryan', 'steps':230}]
+         },
+         {'team': 'Red Beans & Rice',
+          'members': [{'name': 'jon', 'steps':120},
+                     {'name': 'ryan', 'steps':230}]
+         },
+         {'team': 'Red Beans & Rice',
           'members': [{'name': 'jon', 'steps':120},
                      {'name': 'ryan', 'steps':230}]
          },
@@ -212,6 +231,9 @@
                      {'name': 'allen', 'steps':2300}]
          }
          ];
+
+       plotTeamLeaderboard(teamLeaderData);
+       plotPersonalLeaderboard(personLeaderData);
        for(var i=0; i<contributions.length; i++) {
          plotTeamMembers(i, contributions[i]);
        }
@@ -222,7 +244,6 @@
   </head>
 
   <body>
-
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
@@ -234,7 +255,7 @@
           <a class="brand" href="#">SEP FitBit Challenge</a>
           <div class="nav-collapse collapse">
             <p class="navbar-text pull-right">
-              <span id="total_steps" class="big">Total Steps: 602,134</span>
+              <span class="big">Total Steps: <span id="total_steps">602,134</span></span>
             </p>
           </div><!--/.nav-collapse -->
 
@@ -269,10 +290,6 @@
       </div>
 
       <hr>
-
-      <footer>
-        <p>&copy; Company 2012</p>
-      </footer>
 
     </div><!--/.fluid-container-->
 
