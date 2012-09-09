@@ -41,7 +41,7 @@ get '/member_contributions' do
   cnt_by_team = by_team.keys.each do |team_name|
     member_data = by_team[team_name].group_by{|t| t.user_id}
 
-    overall << {team: team_name, members: member_data.keys.map{|user_id| {name: user_id, steps: sum_steps(member_data[user_id])}}}
+    overall << {team: team_name, members: member_data.keys.map{|user_id| {name: member_data[user_id].first.name, steps: sum_steps(member_data[user_id])}}}
   end 
   overall.sort_by{|d| d[:team]}.to_json
 end
