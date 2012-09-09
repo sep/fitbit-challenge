@@ -40,6 +40,7 @@
    <script src="http://cdnjs.cloudflare.com/ajax/libs/highcharts/2.1.6/highcharts.js"></script>
    <script>
      $(document).ready(function() {
+       // TODO: make this correct
        var stepsToNawlins = 1600000;
 
        var plotTeamLeaderboard = function(data) {
@@ -178,73 +179,32 @@
                  });
        };
 
-       var teamLeaderData = [
-         {'team': 'Red Beans & Rice', 'steps':1234},
-         {'team': 'Red Beans & Rice', 'steps':1234},
-         {'team': 'Red Beans & Rice', 'steps':1234},
-         {'team': 'Red Beans & Rice', 'steps':1234},
-         {'team': 'Red Beans & Rice', 'steps':1234},
-         {'team': 'Red Beans & Rice', 'steps':1234},
-         {'team': 'Red Beans & Rice', 'steps':1234},
-         {'team': 'Red Beans & Rice', 'steps':1234},
-         {'team': 'Red Beans & Rice', 'steps':1234},
-         {'team': 'Cheese Weasels', 'steps':2345}
-       ];
+       $.ajax({
+         url: "/team_leaderboard",
+         dataType: "json",
+         success: function(data) {
+           plotTeamLeaderboard(data);
+         };
+       });
 
-       var personLeaderData = [
-         {'person': 'Allen', 'steps':1234},
-         {'person': 'Allen', 'steps':1234},
-         {'person': 'Allen', 'steps':1234},
-         {'person': 'Allen', 'steps':1234},
-         {'person': 'Allen', 'steps':1234},
-         {'person': 'Allen', 'steps':1234},
-         {'person': 'Allen', 'steps':1234},
-         {'person': 'Allen', 'steps':1234},
-         {'person': 'Allen', 'steps':1234},
-         {'person': 'Allen', 'steps':1234},
-         {'person': 'Jon', 'steps':2345}
-       ];
+       $.ajax({
+         url: "/personal_leaderboard",
+         dataType: "json",
+         success: function(data) {
+           plotPersonalLeaderboard(data);
+         };
+       });
 
-       var contributions = [
-         {'team': 'Red Beans & Rice',
-          'members': [{'name': 'jon', 'steps':120},
-                     {'name': 'ryan', 'steps':230}]
-         },
-         {'team': 'Red Beans & Rice',
-          'members': [{'name': 'jon', 'steps':120},
-                     {'name': 'ryan', 'steps':230}]
-         },
-         {'team': 'Red Beans & Rice',
-          'members': [{'name': 'jon', 'steps':120},
-                     {'name': 'ryan', 'steps':230}]
-         },
-         {'team': 'Red Beans & Rice',
-          'members': [{'name': 'jon', 'steps':120},
-                     {'name': 'ryan', 'steps':230}]
-         },
-         {'team': 'Red Beans & Rice',
-          'members': [{'name': 'jon', 'steps':120},
-                     {'name': 'ryan', 'steps':230}]
-         },
-         {'team': 'Red Beans & Rice',
-          'members': [{'name': 'jon', 'steps':120},
-                     {'name': 'ryan', 'steps':230}]
-         },
-         {'team': 'Red Beans & Rice',
-          'members': [{'name': 'jon', 'steps':120},
-                     {'name': 'ryan', 'steps':230}]
-         },
-         {'team': 'Cheese Weasels',
-          'members': [{'name': 'bob', 'steps':20},
-                     {'name': 'allen', 'steps':2300}]
-         }
-         ];
 
-       plotTeamLeaderboard(teamLeaderData);
-       plotPersonalLeaderboard(personLeaderData);
-       for(var i=0; i<contributions.length; i++) {
-         plotTeamMembers(i, contributions[i]);
-       }
+       $.ajax({
+         url: "/member_contributions",
+         dataType: "json",
+         success: function(data) {
+           for (var i=0; i<data.length; i++) {
+             plotTeamMembers(i, data[i]);
+           }
+         };
+       });
 
 
      });

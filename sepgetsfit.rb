@@ -10,10 +10,6 @@ require './activity'
 
 DataMapper.auto_upgrade!
 
-get '/' do
-  'hello world'
-end
-
 get '/total' do
   # TODO: optimize.  run sql in database?
   activities = Activity.all
