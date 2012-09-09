@@ -29,7 +29,7 @@ get '/personal_leaderboard' do
   activities = Activity.all
   by_person = activities.group_by{|a| a.user_id}
   cnt_by_person = by_person.keys.inject([]){|memo, user_id| memo << {person: by_person[user_id].first.name, steps: sum_steps(by_person[user_id])}}
-  cnt_by_person.sort_by{|s| s[:steps]}.reverse.to_json
+  cnt_by_person.sort_by{|s| s[:steps]}.reverse.take(10).to_json
 end
 
 get '/member_contributions' do
