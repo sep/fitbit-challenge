@@ -25,6 +25,8 @@ end
 
 days_ago = ARGV.first.to_i || 0
 data_date = Date.today - days_ago
+puts data_date
+puts ENV['DATABASE_URL'] 
 
 Activity.all(:date => data_date).destroy
 DATA.select{|u| !(u['token'].empty?)}.each {|u| store(u['token'], u['secret'], u['user_id'], data_date, u['team'], u['sep_userid'])}
