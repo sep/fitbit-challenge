@@ -179,33 +179,44 @@
                  });
        };
 
-       $.ajax({
-         url: "/team_leaderboard",
-         dataType: "json",
-         success: function(data) {
-           plotTeamLeaderboard(data);
-         };
-       });
-
-       $.ajax({
-         url: "/personal_leaderboard",
-         dataType: "json",
-         success: function(data) {
-           plotPersonalLeaderboard(data);
-         };
-       });
-
-
-       $.ajax({
-         url: "/member_contributions",
-         dataType: "json",
-         success: function(data) {
-           for (var i=0; i<data.length; i++) {
-             plotTeamMembers(i, data[i]);
+       var updateBoards = function() {
+         $.ajax({
+           url: "/total",
+           dataType: "json",
+           success: function(data) {
+             $("#total_steps").text(data);
            }
-         };
-       });
+         });
 
+         $.ajax({
+           url: "/team_leaderboard",
+           dataType: "json",
+           success: function(data) {
+             plotTeamLeaderboard(data);
+           }
+         });
+
+         $.ajax({
+           url: "/personal_leaderboard",
+           dataType: "json",
+           success: function(data) {
+             plotPersonalLeaderboard(data);
+           }
+         });
+
+         $.ajax({
+           url: "/member_contributions",
+           dataType: "json",
+           success: function(data) {
+             for (var i=0; i<data.length; i++) {
+               plotTeamMembers(i, data[i]);
+             }
+           }
+         });
+       };
+
+       updateBoards();
+       setInterval(updateBoards, 1000*60*30); // update boards every 30 minutes
 
      });
    </script>
