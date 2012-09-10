@@ -1,2 +1,2 @@
 #!/usr/bin/env ruby
-puts "hello"
+puts "hello ${ARGV[0]}"
