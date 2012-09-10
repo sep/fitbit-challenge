@@ -15,7 +15,7 @@ CONSUMER_SECRET = '442944ace4b54fddae26727e6d69c136'
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/data.db")
 DataMapper.auto_upgrade!
 
-DATA = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'users.json')))
+DATA = JSON.parse(File.read(File.join(File.dirname(__FILE__), '../users.json')))
 
 def store(token, secret, user_id, date, team, sep_userid)
   client = FitData.new(CONSUMER_KEY, CONSUMER_SECRET)
