@@ -29,4 +29,4 @@ puts data_date
 puts ENV['DATABASE_URL'] 
 
 Activity.all(:date => data_date).destroy
-DATA.select{|u| !(u['token'].empty?)}.each {|u| store(u['token'], u['secret'], u['user_id'], data_date, u['team'], u['sep_userid'])}
+DATA.select{|u| !(u['token'].empty?)}.each {|u| puts u['sep_userid']; store(u['token'], u['secret'], u['user_id'], data_date, u['team'], u['sep_userid'])}
