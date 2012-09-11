@@ -30,5 +30,10 @@ data_date = Date.today - days_ago
 puts data_date
 puts ENV['DATABASE_URL'] 
 
+if data_date < Date.new(2012, 9, 5)
+  puts "Date is before contest start date.  Quitting"
+  exit
+end
+
 Activity.all(:date => data_date).destroy
 DATA.select{|u| !(u['token'].empty?)}.each {|u| puts u['sep_userid']; store(u['token'], u['secret'], u['user_id'], data_date, u['team'], u['sep_userid'])}
