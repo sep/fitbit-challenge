@@ -23,6 +23,9 @@
       .leaderboard {
         height: 300px;
       }
+      .small_leaderboard {
+        height: 150px;
+      }
       .memberchart {
         height: 200px;
       }
@@ -40,8 +43,46 @@
    <script src="http://cdnjs.cloudflare.com/ajax/libs/highcharts/2.1.6/highcharts.js"></script>
    <script>
      $(document).ready(function() {
-       // TODO: make this correct
        var stepsToNawlins = 1624000;
+
+       var drawLeaderboard = function(targetDiv, title, max, steps, names) {
+         chart = new Highcharts.Chart({
+                     chart: {
+                         renderTo: targetDiv,
+                         type: 'bar'
+                     },
+                     title: {
+                         text: title
+                     },
+                     xAxis: {
+                         categories: names,
+                     },
+                     yAxis: {
+                         min: 0,
+                         max: max,
+                         labels: {
+                             overflow: 'justify'
+                         }
+                     },
+                     plotOptions: {
+                         bar: {
+                             dataLabels: {
+                                 enabled: true
+                             }
+                         }
+                     },
+                     credits: {
+                         enabled: false
+                     },
+                     legend: {
+                         enabled: false
+                     },
+                     series: [{
+                         name: 'Steps',
+                         data: steps
+                     }]
+                 });
+       };
 
        var plotTeamLeaderboard = function(data) {
          teams = data.map(function(x){ return x.team});
@@ -50,50 +91,19 @@
          for (var i=0; i<teams.length; i++) {
            teams[i] = "(" + (i+1) + ")" + teams[i];
          }
-
-         chart = new Highcharts.Chart({
-                     chart: {
-                         renderTo: 'team_board',
-                         type: 'bar'
-                     },
-                     title: {
-                         text: 'Overall Team Leaderboard'
-                     },
-                     xAxis: {
-                         categories: teams,
-                         title: {
-                             text: 'Steps'
-                         }
-                     },
-                     yAxis: {
-                         min: 0,
-                         max: stepsToNawlins,
-                         title: {
-                             text: null
-                         },
-                         labels: {
-                             overflow: 'justify'
-                         }
-                     },
-                     plotOptions: {
-                         bar: {
-                             dataLabels: {
-                                 enabled: true
-                             }
-                         }
-                     },
-                     credits: {
-                         enabled: false
-                     },
-                     legend: {
-                         enabled: false
-                     },
-                     series: [{
-                         name: 'Steps',
-                         data: steps
-                     }]
-                 });
+	 drawLeaderboard('team_board', 'Overall Team Leaderboard', stepsToNawlins, steps, teams);
        };
+
+       var plotWeekTeamLeaderboard = function(data) {
+         teams = data.map(function(x){ return x.team});
+         steps = data.map(function(x){ return x.steps});
+
+         for (var i=0; i<teams.length; i++) {
+           teams[i] = "(" + (i+1) + ")" + teams[i];
+         }
+	 drawLeaderboard('week_team_board', 'Top 3 Teams This Week', stepsToNawlins, steps, teams);
+       };
+
        var plotPersonalLeaderboard = function(data) {
          people = data.map(function(x){ return x.person});
          steps = data.map(function(x){ return x.steps});
@@ -102,50 +112,20 @@
            people[i] = "(" + (i+1) + ")" + people[i];
          }
 
-         chart = new Highcharts.Chart({
-                     chart: {
-                         renderTo: 'personal_board',
-                         type: 'bar'
-                     },
-                     title: {
-                         text: 'Top 10 Personal Leaderboard'
-                     },
-                     xAxis: {
-                         categories: people,
-                         title: {
-                             text: null
-                         }
-                     },
-                     yAxis: {
-                         min: 0,
-                         max: stepsToNawlins,
-                         title: {
-                             text: null,
-                             align: 'high'
-                         },
-                         labels: {
-                             overflow: 'justify'
-                         }
-                     },
-                     plotOptions: {
-                         bar: {
-                             dataLabels: {
-                                 enabled: true
-                             }
-                         }
-                     },
-                     credits: {
-                         enabled: false
-                     },
-                     legend: {
-                         enabled: false
-                     },
-                     series: [{
-                         name: 'Steps',
-                         data: steps
-                     }]
-                 });
+	 drawLeaderboard('personal_board', 'Top 10 Personal Leaderboard', stepsToNawlins, steps, people);
        };
+
+       var plotWeekPersonalLeaderboard = function(data) {
+         people = data.map(function(x){ return x.person});
+         steps = data.map(function(x){ return x.steps});
+
+         for (var i=0; i<people.length; i++) {
+           people[i] = "(" + (i+1) + ")" + people[i];
+         }
+
+	 drawLeaderboard('week_personal_board', 'Top 3 Individuals This Week', stepsToNawlins, steps, people);
+       };
+
        var plotTeamMembers = function(index, data) {
          var memberData = data.members.map(function(x) { return [x.name, x.steps]; });
          chart = new Highcharts.Chart({
@@ -193,6 +173,7 @@
            dataType: "json",
            success: function(data) {
              plotTeamLeaderboard(data);
+             plotWeekTeamLeaderboard(data);
            }
          });
 
@@ -201,8 +182,11 @@
            dataType: "json",
            success: function(data) {
              plotPersonalLeaderboard(data);
+             plotWeekPersonalLeaderboard(data);
            }
          });
+
+	 // TODO: top 3 boards
 
          $.ajax({
            url: "/member_contributions",
@@ -244,12 +228,16 @@
 
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span6 offset3">
-        </div>
-      </div>
-      <div class="row-fluid">
-        <div id="team_board" class="span8 leaderboard"></div>
+        <div id="team_board" class="span4 leaderboard"></div>
         <div id="personal_board" class="span4 leaderboard"></div>
+	<div class="span4 leaderboard">
+          <div class="row-fluid">
+            <div id="week_team_board" class="span12 small_leaderboard"></div>
+	  </div>
+          <div class="row-fluid">
+            <div id="week_personal_board" class="span12 small_leaderboard"></div>
+	  </div>
+	</div>
       </div>
       <div class="row-fluid">
         <div id="member0" class="span2 memberchart"></div>
