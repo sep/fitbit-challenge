@@ -161,13 +161,23 @@
                      }]
                  });
        };
-
+	   var toCommaSeparatedNumber = function(nStr) {
+ 		   nStr += '';
+			x = nStr.split('.');
+			x1 = x[0];
+			x2 = x.length > 1 ? '.' + x[1] : '';
+			var rgx = /(\d+)(\d{3})/;
+			while (rgx.test(x1)) {
+				x1 = x1.replace(rgx, '$1' + ',' + '$2');
+			}
+			return x1 + x2;
+	   }
        var updateBoards = function() {
          $.ajax({
            url: "/total",
            dataType: "json",
            success: function(data) {
-             $("#total_steps").text(data);
+             $("#total_steps").text(toCommaSeparatedNumber(data));
            }
          });
 
