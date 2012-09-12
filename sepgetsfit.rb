@@ -32,6 +32,22 @@ get '/personal_leaderboard' do
   cnt_by_person.sort_by{|s| s[:steps]}.reverse.take(10).to_json
 end
 
+get '/team_week' do
+  # TODO: optimize.  run sql in database?
+  activities = Activity.all(:date => ((Date.today-Date.today.wday)..Date.today))
+  by_team = activities.group_by{|a| a.team}
+  cnt_by_team = by_team.keys.inject([]){|memo, team_name| memo << {team: team_name, steps: sum_steps(by_team[team_name])}}
+  cnt_by_team.sort_by{|s| s[:steps]}.reverse.take(3).to_json
+end
+
+get '/personal_week' do
+  # TODO: optimize.  run sql in database?
+  activities = Activity.all(:date => ((Date.today-Date.today.wday)..Date.today))
+  by_person = activities.group_by{|a| a.user_id}
+  cnt_by_person = by_person.keys.inject([]){|memo, user_id| memo << {person: by_person[user_id].first.name, steps: sum_steps(by_person[user_id])}}
+  cnt_by_person.sort_by{|s| s[:steps]}.reverse.take(3).to_json
+end
+
 get '/member_contributions' do
   # TODO: optimize.  run sql in database?
   activities = Activity.all

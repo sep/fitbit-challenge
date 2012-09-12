@@ -60,6 +60,9 @@
                      yAxis: {
                          min: 0,
                          max: max,
+                         title: {
+                             text: ''
+                         },
                          labels: {
                              overflow: 'justify'
                          }
@@ -101,7 +104,7 @@
          for (var i=0; i<teams.length; i++) {
            teams[i] = "(" + (i+1) + ")" + teams[i];
          }
-	 drawLeaderboard('week_team_board', 'Top 3 Teams This Week', stepsToNawlins, steps, teams);
+	 drawLeaderboard('week_team_board', 'Top 3 Teams This Week', null, steps, teams);
        };
 
        var plotPersonalLeaderboard = function(data) {
@@ -123,7 +126,7 @@
            people[i] = "(" + (i+1) + ")" + people[i];
          }
 
-	 drawLeaderboard('week_personal_board', 'Top 3 Individuals This Week', stepsToNawlins, steps, people);
+	 drawLeaderboard('week_personal_board', 'Top 3 Individuals This Week', null, steps, people);
        };
 
        var plotTeamMembers = function(index, data) {
@@ -173,6 +176,13 @@
            dataType: "json",
            success: function(data) {
              plotTeamLeaderboard(data);
+           }
+         });
+
+         $.ajax({
+           url: "/team_week",
+           dataType: "json",
+           success: function(data) {
              plotWeekTeamLeaderboard(data);
            }
          });
@@ -182,11 +192,16 @@
            dataType: "json",
            success: function(data) {
              plotPersonalLeaderboard(data);
-             plotWeekPersonalLeaderboard(data);
            }
          });
 
-	 // TODO: top 3 boards
+         $.ajax({
+           url: "/personal_week",
+           dataType: "json",
+           success: function(data) {
+             plotWeekPersonalLeaderboard(data);
+           }
+         });
 
          $.ajax({
            url: "/member_contributions",
