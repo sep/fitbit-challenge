@@ -36,4 +36,10 @@ if data_date < Date.new(2012, 9, 5)
 end
 
 Activity.all(:date => data_date).destroy
-DATA.select{|u| !(u['token'].empty?)}.each {|u| puts u['sep_userid']; store(u['token'], u['secret'], u['user_id'], data_date, u['team'], u['sep_userid'])}
+DATA.select{|u| !(u['token'].empty?)}.each do |u|
+  begin
+    puts u['sep_userid']; store(u['token'], u['secret'], u['user_id'], data_date, u['team'], u['sep_userid'])
+  rescue
+    $stderr.puts "errored on #{u['sep_userid']}"
+  end
+end
