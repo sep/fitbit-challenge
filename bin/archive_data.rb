@@ -22,6 +22,7 @@ def get_activity(token, secret, user_id, date, team, sep_userid)
   activity = client.get_data(token, secret, user_id, date)
   activity.team = team
   activity.name ||= sep_userid
+  activity
 end
 
 days_ago = ARGV.first.to_i || 0
