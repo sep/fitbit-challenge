@@ -10,6 +10,10 @@ require './activity'
 
 DataMapper.auto_upgrade!
 
+get '/' do
+ redirect '/index.htm'
+end
+
 get '/total' do
   # TODO: optimize.  run sql in database?
   activities = Activity.all
