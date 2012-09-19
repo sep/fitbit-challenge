@@ -8,6 +8,7 @@ require 'json'
 require 'data_mapper'
 require './fit_data'
 require './activity'
+require './user'
 
 CONSUMER_KEY = '7556156012894ad0882b86dd67f3a416'
 CONSUMER_SECRET = '442944ace4b54fddae26727e6d69c136'
@@ -15,13 +16,13 @@ CONSUMER_SECRET = '442944ace4b54fddae26727e6d69c136'
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/data.db")
 DataMapper.auto_upgrade!
 
-DATA = JSON.parse(File.read(File.join(File.dirname(__FILE__), '../users.json')))
+DATA = User.all
 
-def get_activity(token, secret, user_id, date, team, sep_userid)
+def get_activity(token, secret, user_id, date, team, name)
   client = FitData.new(CONSUMER_KEY, CONSUMER_SECRET)
   activity = client.get_data(token, secret, user_id, date)
   activity.team = team
-  activity.name ||= sep_userid
+  activity.name = name
   activity
 end
 
@@ -35,13 +36,13 @@ if data_date < Date.new(2012, 9, 5)
   exit
 end
 
-DATA.select{|u| !(u['token'].empty?)}.each do |u|
+DATA.select{|u| !(u.token.empty?)}.each do |u|
   begin
-    puts u['sep_userid'];
-    activity = get_activity(u['token'], u['secret'], u['user_id'], data_date, u['team'], u['sep_userid'])
-    Activity.all(:date => data_date, :user_id => u['user_id']).destroy
+    puts u.name;
+    activity = get_activity(u.token, u.secret, u.user_id, data_date, u.team, u.name)
+    Activity.all(:date => data_date, :user_id => u.user_id).destroy
     activity.save
   rescue Exception => e
-    $stderr.puts "errored on #{u['sep_userid']}" + e.to_s
+    $stderr.puts "errored on #{u.name}" + e.to_s
   end
 end
