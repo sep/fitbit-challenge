@@ -10,6 +10,14 @@ require './activity'
 
 DataMapper.auto_upgrade!
 
+class Array
+  def take_if(n, cond)
+    puts "here: #{cond}"
+    return self unless cond
+    self.take(n)
+  end
+end
+
 get '/' do
  redirect '/index.htm'
 end
@@ -20,36 +28,36 @@ get '/total' do
   sum_steps(activities).to_json
 end
 
-get '/team_leaderboard' do
+get '/team_leaderboard/?:count?' do |count|
   # TODO: optimize.  run sql in database?
   activities = Activity.all
   by_team = activities.group_by{|a| a.team}
   cnt_by_team = by_team.keys.inject([]){|memo, team_name| memo << {team: team_name, steps: sum_steps(by_team[team_name])}}
-  cnt_by_team.sort_by{|s| s[:steps]}.reverse.to_json
+  cnt_by_team.sort_by{|s| s[:steps]}.reverse.take_if(get_count(count), !!count).to_json
 end
 
-get '/personal_leaderboard' do
+get '/personal_leaderboard/?:count?' do |count|
   # TODO: optimize.  run sql in database?
   activities = Activity.all
   by_person = activities.group_by{|a| a.user_id}
   cnt_by_person = by_person.keys.inject([]){|memo, user_id| memo << {person: by_person[user_id].last.name, steps: sum_steps(by_person[user_id])}}
-  cnt_by_person.sort_by{|s| s[:steps]}.reverse.take(10).to_json
+  cnt_by_person.sort_by{|s| s[:steps]}.reverse.take_if(get_count(count), !!count).to_json
 end
 
-get '/team_week' do
+get '/team_week/?:count?' do |count|
   # TODO: optimize.  run sql in database?
   activities = Activity.all(:date => ((Date.today-Date.today.wday)..Date.today))
   by_team = activities.group_by{|a| a.team}
   cnt_by_team = by_team.keys.inject([]){|memo, team_name| memo << {team: team_name, steps: sum_steps(by_team[team_name])}}
-  cnt_by_team.sort_by{|s| s[:steps]}.reverse.take(3).to_json
+  cnt_by_team.sort_by{|s| s[:steps]}.reverse.take_if(get_count(count), !!count).to_json
 end
 
-get '/personal_week' do
+get '/personal_week/?:count?' do |count|
   # TODO: optimize.  run sql in database?
   activities = Activity.all(:date => ((Date.today-Date.today.wday)..Date.today))
   by_person = activities.group_by{|a| a.user_id}
   cnt_by_person = by_person.keys.inject([]){|memo, user_id| memo << {person: by_person[user_id].last.name, steps: sum_steps(by_person[user_id])}}
-  cnt_by_person.sort_by{|s| s[:steps]}.reverse.take(3).to_json
+  cnt_by_person.sort_by{|s| s[:steps]}.reverse.take_if(get_count(count), !!count).to_json
 end
 
 get '/member_contributions' do
@@ -64,6 +72,10 @@ get '/member_contributions' do
     overall << {team: team_name, members: member_data.keys.map{|user_id| {name: member_data[user_id].last.name, steps: sum_steps(member_data[user_id])}}}
   end 
   overall.sort_by{|d| d[:team]}.to_json
+end
+
+def get_count(count_param)
+  !!count_param ? count_param.to_i : -1
 end
 
 def sum_steps(enum)

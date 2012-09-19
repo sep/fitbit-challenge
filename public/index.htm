@@ -190,7 +190,7 @@
          });
 
          $.ajax({
-           url: "/team_week",
+           url: "/team_week/3",
            dataType: "json",
            success: function(data) {
              plotWeekTeamLeaderboard(data);
@@ -198,7 +198,7 @@
          });
 
          $.ajax({
-           url: "/personal_leaderboard",
+           url: "/personal_leaderboard/10",
            dataType: "json",
            success: function(data) {
              plotPersonalLeaderboard(data);
@@ -206,7 +206,7 @@
          });
 
          $.ajax({
-           url: "/personal_week",
+           url: "/personal_week/3",
            dataType: "json",
            success: function(data) {
              plotWeekPersonalLeaderboard(data);
