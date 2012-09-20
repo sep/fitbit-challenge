@@ -10,8 +10,7 @@ require './fit_data'
 require './activity'
 require './user'
 
-CONSUMER_KEY = '7556156012894ad0882b86dd67f3a416'
-CONSUMER_SECRET = '442944ace4b54fddae26727e6d69c136'
+CONFIG = JSON.parse(File.read(File.join(File.dirname(__FILE__), '../config.json')))
 
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/data.db")
 DataMapper.auto_upgrade!
@@ -19,7 +18,7 @@ DataMapper.auto_upgrade!
 DATA = User.all
 
 def get_activity(token, secret, user_id, date, team, name)
-  client = FitData.new(CONSUMER_KEY, CONSUMER_SECRET)
+  client = FitData.new(CONFIG['consumer_key'], CONFIG['consumer_secret'])
   activity = client.get_data(token, secret, user_id, date)
   activity.team = team
   activity.name = name
@@ -31,7 +30,7 @@ data_date = Date.today - days_ago
 puts data_date
 puts ENV['DATABASE_URL'] 
 
-if data_date < Date.new(2012, 9, 5)
+if data_date < Date.parse(CONFIG['start_date'])
   puts "Date is before contest start date.  Quitting"
   exit
 end
