@@ -10,6 +10,8 @@ require './activity'
 
 DataMapper.auto_upgrade!
 
+CONFIG = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'config.json')))
+
 class Array
   def take_if(n, cond)
     puts "here: #{cond}"
@@ -19,7 +21,7 @@ class Array
 end
 
 get '/' do
- redirect '/index.htm'
+ erb :index
 end
 
 get '/total' do
