@@ -24,6 +24,10 @@ get '/' do
  erb :index
 end
 
+get '/index.htm' do
+  redirect '/'
+end
+
 get '/total' do
   # TODO: optimize.  run sql in database?
   activities = Activity.all
