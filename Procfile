@@ -1,1 +1,1 @@
-web: bundle exec ruby sepgetsfit.rb -p $PORT
+web: bundle exec ruby fitbit-challenge.rb -p $PORT
