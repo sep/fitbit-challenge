@@ -17,6 +17,10 @@ DataMapper.auto_upgrade!
 
 DATA = User.all
 
+puts "Just so you know, here is your database connection info:"
+puts DataMapper.repository.adapter.options
+puts
+
 def get_activity(token, secret, user_id, date, team, name)
   client = FitData.new(CONFIG['consumer_key'], CONFIG['consumer_secret'])
   activity = client.get_data(token, secret, user_id, date)

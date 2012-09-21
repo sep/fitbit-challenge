@@ -2,15 +2,24 @@ require 'rubygems'
 require 'bundler/setup'
 require 'date'
 require 'mail'
+
+require 'data_mapper'
 require './fit_data'
+require './activity'
+require './user'
 
-CONSUMER_KEY = '7556156012894ad0882b86dd67f3a416'
-CONSUMER_SECRET = '442944ace4b54fddae26727e6d69c136'
+CONFIG = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'config.json')))
 
-DATA = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'users.json')))
+DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/data.db")
+DataMapper.auto_upgrade!
 
-def get_data(token, secret, user_id, team, sep_userid)
-  client = FitData.new(CONSUMER_KEY, CONSUMER_SECRET)
+puts "Just so you know, here is your database connection info:"
+puts DataMapper.repository.adapter.options
+puts
+
+def get_data(token, secret, user_id, team, name)
+  puts "getting data for #{name}"
+  client = FitData.new(CONFIG['consumer_key'], CONFIG['consumer_secret'])
   now = DateTime.now
   sunday = client.get_data(token, secret, user_id, now - now.wday - 7)
   monday = client.get_data(token, secret, user_id, now - now.wday - 6)
@@ -19,7 +28,6 @@ def get_data(token, secret, user_id, team, sep_userid)
   thursday = client.get_data(token, secret, user_id, now - now.wday - 3)
   friday = client.get_data(token, secret, user_id, now - now.wday - 2)
   saturday = client.get_data(token, secret, user_id, now - now.wday - 1)
-  name = sunday.name || sep_userid
   {name: name,
    steps: { sunday: sunday.steps,
             monday: monday.steps,
@@ -33,7 +41,7 @@ def get_data(token, secret, user_id, team, sep_userid)
   }
 end
 
-data = DATA.select{|u| !(u['token'].empty?)}.map {|u| get_data(u['token'], u['secret'], u['user_id'], u['team'], u['sep_userid'])}
+data = User.all.map {|u| get_data(u.token, u.secret, u.user_id, u.team, u.name)}
 
 data = data.group_by{|u| u[:team]}
 data = data.sort_by{|u| u[0]}
