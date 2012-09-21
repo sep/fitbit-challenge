@@ -18,3 +18,7 @@ http://sepgetsfit.herokuapp.com
 ## Adding users
 
 For now... use the `setup.rb` script.
+
+## Updating the data
+
+For now... call `bin/archive_data.rb [N]` or `heroku run archive_data.rb [N]`, periodically.  N is the number of days ago to refresh the data for.  The default is 0, which means refresh today's data.  Passing 1 will refresh yesterday's data.
