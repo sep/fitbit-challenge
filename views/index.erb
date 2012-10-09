@@ -45,7 +45,13 @@
      $(document).ready(function() {
        var stepGoal = <%= CONFIG['step_goal'] %>;
 
+       function getMaxOfArray(numArray) {
+         return Math.max.apply(null, numArray);
+       }
+
        var drawLeaderboard = function(targetDiv, title, max, steps, names) {
+         boardMax = Math.max(getMaxOfArray(steps), stepGoal);
+
          chart = new Highcharts.Chart({
                      chart: {
                          renderTo: targetDiv,
@@ -59,7 +65,7 @@
                      },
                      yAxis: {
                          min: 0,
-                         max: max,
+                         max: boardMax,
                          title: {
                              text: ''
                          },
