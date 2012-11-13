@@ -22,10 +22,6 @@ class FitData
 
   def get_data(token, secret, user_id, date)
     Activity.first(:date => date, :user_id => user_id)
-    return a if a
-
-    puts "no data for #{user_id} for #{date}"
-    Activity.new.tap{|a| a.steps=0}
   end
 
 end
