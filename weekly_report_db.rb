@@ -53,21 +53,17 @@ def get_report(client, users, date)
   mail_body = "Weekly report for #{range_string}\n\n"
 
   by_team.each do |x|
-    team_total = 0
-    mail_body += "#{x[0]}\n"
+    team_name = x[0]
+    team_members = x[1]
 
-    x[1].each do |i|
-      mail_body += "#{i[:name]}  #{i[:steps][:sunday]}, #{i[:steps][:monday]}, #{i[:steps][:tuesday]}, #{i[:steps][:wednesday]}, #{i[:steps][:thursday]}, #{i[:steps][:friday]}, #{i[:steps][:saturday]} Total:#{i[:steps][:sunday]+i[:steps][:monday]+i[:steps][:tuesday]+i[:steps][:wednesday]+i[:steps][:thursday]+i[:steps][:friday]+i[:steps][:saturday]}\n"
-	  team_total += i[:steps][:sunday]
-	  team_total += i[:steps][:monday]
-	  team_total += i[:steps][:tuesday]
-	  team_total += i[:steps][:wednesday]
-	  team_total += i[:steps][:thursday]
-	  team_total += i[:steps][:friday]
-	  team_total += i[:steps][:saturday]
+    team_total = 0
+    mail_body += ([team_name,"Name"] + ((date - date.wday - 7)..(date - date.wday - 1)).map{|d| d.to_s}).join(',')
+    mail_body += "\n"
+
+    team_members.each do |person|
+      mail_body += ",#{person[:name]},#{person[:steps][:sunday]},#{person[:steps][:monday]},#{person[:steps][:tuesday]},#{person[:steps][:wednesday]},#{person[:steps][:thursday]},#{person[:steps][:friday]},#{person[:steps][:saturday]}\n"
   end
 
-    mail_body += "Team total: #{team_total}\n"
     mail_body += "\n"
   end
   mail_body
