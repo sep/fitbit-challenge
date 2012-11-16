@@ -62,21 +62,4 @@ data.each do |x|
   mail_body += "\n"
 end
 
-mail_options = { 
-    :address => 'mail.sep.com',
-    :port => '25',
-    :enable_starttls_auto => false
-  }
-
-Mail.defaults do
-  delivery_method :smtp, mail_options
-end
-
-mail = Mail.new do
-      from 'noreply@sep.com'
-        to 'trimble@sep.com'
-   subject "Weekly New Orleans Walk Challenge Report #{range_string} (Database)"
-      body mail_body
-end
-
-mail.deliver!
+puts mail_body
