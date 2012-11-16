@@ -9,16 +9,16 @@ CONSUMER_SECRET = '442944ace4b54fddae26727e6d69c136'
 
 DATA = User.all
 
-def get_data(token, secret, user_id, team, sep_userid)
+def get_data(token, secret, user_id, team, sep_userid, date_in_week)
   client = FitData.new(CONSUMER_KEY, CONSUMER_SECRET)
-  now = Date.today
-  sunday = client.get_data(token, secret, user_id, now - now.wday - 7)
-  monday = client.get_data(token, secret, user_id, now - now.wday - 6)
-  tuesday = client.get_data(token, secret, user_id, now - now.wday - 5)
-  wednesday = client.get_data(token, secret, user_id, now - now.wday - 4)
-  thursday = client.get_data(token, secret, user_id, now - now.wday - 3)
-  friday = client.get_data(token, secret, user_id, now - now.wday - 2)
-  saturday = client.get_data(token, secret, user_id, now - now.wday - 1)
+  sunday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 7)
+  monday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 6)
+  tuesday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 5)
+  wednesday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 4)
+  thursday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 3)
+  friday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 2)
+  saturday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 1)
+
   name = sep_userid
   {name: name,
    steps: { sunday: sunday.steps,
@@ -33,12 +33,14 @@ def get_data(token, secret, user_id, team, sep_userid)
   }
 end
 
-data = DATA.select{|u| !(u['token'].empty?)}.map {|u| get_data(u['token'], u['secret'], u['user_id'], u['team'], u['name'])}
+date_to_use = Date.today
+
+data = DATA.select{|u| !(u['token'].empty?)}.map {|u| get_data(u['token'], u['secret'], u['user_id'], u['team'], u['name'], date_to_use)}
 
 data = data.group_by{|u| u[:team]}
 data = data.sort_by{|u| u[0]}
 
-range_string = "#{(DateTime.now - DateTime.now.wday - 7).to_date} through #{(DateTime.now - DateTime.now.wday - 1).to_date}"
+range_string = "#{(date_to_use - date_to_use.wday - 7)} through #{(date_to_use - date_to_use.wday - 1)}"
 mail_body = "Weekly report for #{range_string}\n\n"
 
 data.each do |x|
