@@ -2,9 +2,10 @@ require 'rubygems'
 require 'bundler/setup'
 require 'date'
 require 'mail'
-
 require 'data_mapper'
+
 require './fit_data'
+require './fit_data_db'
 require './activity'
 require './user'
 
@@ -16,17 +17,16 @@ puts "Just so you know, here is your database connection info:"
 puts DataMapper.repository.adapter.options
 puts
 
-def get_data(token, secret, user_id, team, name)
-  puts "getting data for #{name}"
-  client = FitData.new(CONFIG['consumer_key'], CONFIG['consumer_secret'])
-  now = DateTime.now
-  sunday = client.get_data(token, secret, user_id, now - now.wday - 7)
-  monday = client.get_data(token, secret, user_id, now - now.wday - 6)
-  tuesday = client.get_data(token, secret, user_id, now - now.wday - 5)
-  wednesday = client.get_data(token, secret, user_id, now - now.wday - 4)
-  thursday = client.get_data(token, secret, user_id, now - now.wday - 3)
-  friday = client.get_data(token, secret, user_id, now - now.wday - 2)
-  saturday = client.get_data(token, secret, user_id, now - now.wday - 1)
+def get_data(client, token, secret, user_id, team, sep_userid, date_in_week)
+  sunday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 7)
+  monday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 6)
+  tuesday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 5)
+  wednesday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 4)
+  thursday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 3)
+  friday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 2)
+  saturday = client.get_data(token, secret, user_id, date_in_week - date_in_week.wday - 1)
+
+  name = sep_userid
   {name: name,
    steps: { sunday: sunday.steps,
             monday: monday.steps,
@@ -40,48 +40,40 @@ def get_data(token, secret, user_id, team, name)
   }
 end
 
-data = User.all.map {|u| get_data(u.token, u.secret, u.user_id, u.team, u.name)}
+def get_report(client, users, date)
+  step_data = users
+                .select{|u| !(u['token'].empty?)}
+                .map {|u| get_data(client, u['token'], u['secret'], u['user_id'], u['team'], u['name'], date)}
+  
+  by_team = step_data
+             .group_by{|u| u[:team]}
+             .sort_by{|u| u[0]}
 
-data = data.group_by{|u| u[:team]}
-data = data.sort_by{|u| u[0]}
+  range_string = "#{(date - date.wday - 7)} through #{(date - date.wday - 1)}"
+  mail_body = "Weekly report for #{range_string}\n\n"
 
-range_string = "#{(DateTime.now - DateTime.now.wday - 7).to_date} through #{(DateTime.now - DateTime.now.wday - 1).to_date}"
-mail_body = "Weekly report for #{range_string}\n\n"
+  by_team.each do |x|
+    team_name = x[0]
+    team_members = x[1]
 
-data.each do |x|
-  team_total = 0
-  mail_body += "#{x[0]}\n"
+    team_total = 0
+    mail_body += ([team_name,"Name"] + ((date - date.wday - 7)..(date - date.wday - 1)).map{|d| d.to_s}).join(',')
+    mail_body += "\n"
 
-  x[1].each do |i|
-    mail_body += "#{i[:name]}  #{i[:steps][:sunday]}, #{i[:steps][:monday]}, #{i[:steps][:tuesday]}, #{i[:steps][:wednesday]}, #{i[:steps][:thursday]}, #{i[:steps][:friday]}, #{i[:steps][:saturday]} Total:#{i[:steps][:sunday]+i[:steps][:monday]+i[:steps][:tuesday]+i[:steps][:wednesday]+i[:steps][:thursday]+i[:steps][:friday]+i[:steps][:saturday]}\n"
-	  team_total += i[:steps][:sunday]
-	  team_total += i[:steps][:monday]
-	  team_total += i[:steps][:tuesday]
-	  team_total += i[:steps][:wednesday]
-	  team_total += i[:steps][:thursday]
-	  team_total += i[:steps][:friday]
-	  team_total += i[:steps][:saturday]
+    team_members.each do |person|
+      mail_body += ",#{person[:name]},#{person[:steps][:sunday]},#{person[:steps][:monday]},#{person[:steps][:tuesday]},#{person[:steps][:wednesday]},#{person[:steps][:thursday]},#{person[:steps][:friday]},#{person[:steps][:saturday]}\n"
   end
 
-  mail_body += "Team total: #{team_total}\n"
-  mail_body += "\n"
+    mail_body += "\n"
+  end
+  mail_body
 end
 
-mail_options = { 
-    :address => 'mail.sep.com',
-    :port => '25',
-    :enable_starttls_auto => false
-  }
+CONFIG = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'config.json')))
+users = User.all
+date_to_use = Date.today
 
-Mail.defaults do
-  delivery_method :smtp, mail_options
-end
-
-mail = Mail.new do
-      from 'noreply@sep.com'
-        to 'trimble@sep.com'
-   subject "Weekly New Orleans Walk Challenge Report #{range_string}"
-      body mail_body
-end
-
-mail.deliver!
+puts "*****************DB REPORT*****************"
+puts get_report(FitDataDb.new, users, date_to_use)
+puts "*****************API REPORT*****************"
+puts get_report(FitData.new(CONFIG['consumer_key'], CONFIG['consumer_secret']), users, date_to_use)
