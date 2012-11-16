@@ -77,5 +77,7 @@ CONFIG = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'config.json')))
 users = User.all
 date_to_use = Date.today
 
-#puts get_report(FitData.new(CONFIG['consumer_key'], CONFIG['consumer_secret']), users, date_to_use)
+puts "*****************DB REPORT*****************"
 puts get_report(FitDataDb.new, users, date_to_use)
+puts "*****************API REPORT*****************"
+puts get_report(FitData.new(CONFIG['consumer_key'], CONFIG['consumer_secret']), users, date_to_use)
