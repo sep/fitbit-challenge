@@ -8,7 +8,6 @@ require './fit_data'
 require './activity'
 require './user'
 
-CONFIG = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'config.json')))
 
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/data.db")
 DataMapper.auto_upgrade!
