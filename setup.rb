@@ -1,16 +1,10 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'fitgem'
-
-require 'data_mapper'
 require './fit_data'
-require './activity'
-require './user'
+require './db'
 
 CONFIG = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'config.json')))
-
-DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/data.db")
-DataMapper.auto_upgrade!
 
 puts "Just so you know, here is your database connection info:"
 puts DataMapper.repository.adapter.options

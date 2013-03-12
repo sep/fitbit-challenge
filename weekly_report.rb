@@ -2,16 +2,10 @@ require 'rubygems'
 require 'bundler/setup'
 require 'date'
 require 'mail'
-require 'data_mapper'
 
+require './db'
 require './fit_data'
 require './fit_data_db'
-require './activity'
-require './user'
-
-
-DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/data.db")
-DataMapper.auto_upgrade!
 
 puts "Just so you know, here is your database connection info:"
 puts DataMapper.repository.adapter.options

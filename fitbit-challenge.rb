@@ -1,14 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'sinatra'
-require 'data_mapper'
 require 'json'
-
-DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/data.db")
-
-require './activity'
-
-DataMapper.auto_upgrade!
+require './db'
 
 CONFIG = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'config.json')))
 

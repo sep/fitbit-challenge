@@ -5,15 +5,10 @@ require 'bundler/setup'
 require 'date'
 require 'json'
 
-require 'data_mapper'
 require './fit_data'
-require './activity'
-require './user'
+require File.join(File.dirname(__FILE__), '../db')
 
 CONFIG = JSON.parse(File.read(File.join(File.dirname(__FILE__), '../config.json')))
-
-DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/data.db")
-DataMapper.auto_upgrade!
 
 DATA = User.all
 
